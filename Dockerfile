@@ -79,8 +79,8 @@ RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && dpkg-reconfigure 
     echo "process_name = xrdp-sesman" >> /etc/supervisor/conf.d/xrdp.conf && \
     echo "[program:xrdp]" >> /etc/supervisor/conf.d/xrdp.conf && \
     echo "command=/usr/sbin/xrdp -nodaemon" >> /etc/supervisor/conf.d/xrdp.conf && \
-    echo "process_name = xrdp" >> /etc/supervisor/conf.d/xrdp.conf
-    echo "exec startxfce4" >> /etc/xrdp/xrdp.ini
+    echo "process_name = xrdp" >> /etc/supervisor/conf.d/xrdp.conf && \
+    echo "exec startxfce4" >> /etc/xrdp/xrdp.ini && \
     sed 's#PLUGIN_PARAMETERS=""#PLUGIN_PARAMETERS="--no-sandbox"#g' /usr/bin/chromium-browser -i
 
 EXPOSE 3389 22
