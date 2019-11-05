@@ -12,6 +12,7 @@ ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 RUN cd /root && \
     sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \ 
     apt-get update -y && \
+    apt-get upgrade -y && \
     apt-get install -y apt-utils && \
     apt-get install -yqq locales  && \ 
     echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \ 
@@ -31,6 +32,18 @@ RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_confi
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 RUN mkdir /root/.ssh
 
+RUN apt-get update \
+ && apt-get -y --no-install-recommends install ffmpeg xfce4 xfce4-goodies xorg dbus-x11 x11-xserver-utils \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get -f install -y firefox
+RUN apt-get -f install -y chromium-browser
+RUN apt-get -f install -y preload
+RUN apt-get -f install -y gnome-system-monitor
+RUN apt-get -f install -y screenfetch
+RUN apt-get -f install -y xrdp
+RUN apt-get -f install -y xorgxrdp
+
 RUN apt-get install --no-install-recommends -yqq \
         supervisor \
         sudo \
@@ -38,25 +51,12 @@ RUN apt-get install --no-install-recommends -yqq \
         vim \
         mc \
         ca-certificates \
-        xterm \
         curl \
         wget \
         nano \
         git \
+        dirmngr \
         net-tools
-
-RUN apt-get install -y xfce4
-RUN apt-get install -y xfce4-goodies
-RUN apt-get install -y xorg
-RUN apt-get install -y dbus-x11
-RUN apt-get install -y x11-xserver-utils
-RUN apt-get install -y firefox
-RUN apt-get install -y chromium-browser
-RUN apt-get install -y preload
-RUN apt-get install -y gnome-system-monitor
-RUN apt-get install -y screenfetch
-RUN apt-get install -y xrdp
-RUN apt-get install -y xorgxrdp
 
 
 RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && dpkg-reconfigure -f noninteractive tzdata && \
