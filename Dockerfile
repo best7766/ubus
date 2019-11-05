@@ -13,6 +13,7 @@ RUN cd /root && \
     sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \
     apt-get update -y && \
     apt-get upgrade -y && \
+    apt-get install -y wget && \
     apt-get install -y apt-utils && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:ubuntu-mozilla-daily/ppa && \
