@@ -6,21 +6,22 @@ RUN echo exit 0 > /usr/sbin/policy-rc.d
 RUN chmod +x /usr/sbin/policy-rc.d
 
 ENV DEBIAN_FRONTEND noninteractive
+RUN export DEBIAN_FRONTEND=noninteractive
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
-ENV LANG en_GB.UTF-8
-ENV LANGUAGE en_GB:GB
-ENV LC_ALL en_GB.UTF-8
-
-
 RUN cd /root && \
     sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \ 
-    apt-get update -y && \ 
-    apt-get install -yqq locales  && \ 
-    echo 'LANG="en_GB.UTF-8"' > /etc/default/locale && \ 
-    echo 'LANGUAGE="en_GB:en"' >> /etc/default/locale && \ 
-    echo 'LC_ALL="en_GB.UTF-8"' >> /etc/default/locale && \ 
-    locale-gen en_GB.UTF-8 && \ 
-    update-locale LANG=en_GB.UTF-8
+    apt-get update -y && \
+    apt-get install -y apt-utils && \
+    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+ENV LANG C.UTF-8
+
 
 RUN apt-get update
 RUN apt-get install -y openssh-server
@@ -29,9 +30,11 @@ RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_confi
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 RUN mkdir /root/.ssh
 
-RUN apt-get install -y apt-utils
-
-RUN apt-get install -y xfce4 xfce4-goodies xorg dbus-x11 x11-xserver-utils
+RUN apt-get install -y xfce4
+RUN apt-get install -y xfce4-goodies
+RUN apt-get install -y xorg
+RUN apt-get install -y dbus-x11
+RUN apt-get install -y x11-xserver-utils
 RUN apt-get install -y firefox
 RUN apt-get install -y chromium-browser
 RUN apt-get install -y preload
