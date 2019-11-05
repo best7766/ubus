@@ -33,8 +33,7 @@ RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_confi
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 RUN mkdir /root/.ssh
 
-RUN apt-get update \
- && apt-get -y --no-install-recommends install ffmpeg xfce4 xfce4-goodies xorg dbus-x11 x11-xserver-utils
+RUN apt-get -y --no-install-recommends install ffmpeg xfce4 xfce4-goodies xorg dbus-x11 x11-xserver-utils
 
 RUN apt-get install --no-install-recommends -yqq \
         firefox \
