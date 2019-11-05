@@ -30,16 +30,6 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV LANG C.UTF-8
 
-# Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update -qqy \
-  && apt-get -qqy install \
-    google-chrome-stable \
-  && rm /etc/apt/sources.list.d/google-chrome.list
-COPY wrap_chrome_binary /opt/bin/wrap_chrome_binary
-RUN /opt/bin/wrap_chrome_binary
-
 RUN apt-get install -y openssh-server
 RUN echo 'root:root' |chpasswd
 RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
