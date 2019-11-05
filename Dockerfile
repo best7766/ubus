@@ -10,7 +10,8 @@ RUN export DEBIAN_FRONTEND=noninteractive
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 RUN cd /root && \
-    sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \ 
+    sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \
+    add-apt-repository ppa:ubuntu-mozilla-daily/ppa && \
     apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y apt-utils && \
@@ -36,15 +37,14 @@ RUN apt-get update \
  && apt-get -y --no-install-recommends install ffmpeg xfce4 xfce4-goodies xorg dbus-x11 x11-xserver-utils \
  && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get -f install -y firefox
-RUN apt-get -f install -y chromium-browser
-RUN apt-get -f install -y preload
-RUN apt-get -f install -y gnome-system-monitor
-RUN apt-get -f install -y screenfetch
-RUN apt-get -f install -y xrdp
-RUN apt-get -f install -y xorgxrdp
-
 RUN apt-get install --no-install-recommends -yqq \
+        firefox \
+        chromium-browser \
+        preload \
+        gnome-system-monitor \
+        screenfetch \
+        xrdp \
+        xorgxrdp \
         supervisor \
         sudo \
         tzdata \
@@ -66,6 +66,7 @@ RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && dpkg-reconfigure 
     echo "mate-session" > /etc/skel/.xsession && \
     sed -i '/TerminalServerUsers/d' /etc/xrdp/sesman.ini  && \
     sed -i '/TerminalServerAdmins/d' /etc/xrdp/sesman.ini  && \
+    sed -i 's#PLUGIN_PARAMETERS=""#PLUGIN_PARAMETERS="--no-sandbox"#g' /usr/bin/chromium-browser  && \
     xrdp-keygen xrdp auto  && \
     mkdir -p /var/run/xrdp && \
     chmod 2775 /var/run/xrdp  && \
@@ -83,7 +84,6 @@ RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && dpkg-reconfigure 
     echo "command=/usr/sbin/xrdp -nodaemon" >> /etc/supervisor/conf.d/xrdp.conf && \
     echo "process_name = xrdp" >> /etc/supervisor/conf.d/xrdp.conf && \
     echo "exec startxfce4" >> /etc/xrdp/xrdp.ini && \
-    sed 's#PLUGIN_PARAMETERS=""#PLUGIN_PARAMETERS="--no-sandbox"#g' /usr/bin/chromium-browser -i && \
     echo "screenfetch" >> /etc/bash.bashrc && \
     echo "2" | update-alternatives --config x-terminal-emulator
     
