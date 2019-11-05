@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-MAINTAINER best "https://github.com/best7766"
+MAINTAINER "https://github.com/best7766"
 
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 RUN chmod +x /usr/sbin/policy-rc.d
@@ -29,6 +29,16 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV LANG C.UTF-8
 
+# Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+  && apt-get update -qqy \
+  && apt-get -qqy install \
+    google-chrome-stable \
+  && rm /etc/apt/sources.list.d/google-chrome.list
+COPY wrap_chrome_binary /opt/bin/wrap_chrome_binary
+RUN /opt/bin/wrap_chrome_binary
+
 RUN apt-get install -y openssh-server
 RUN echo 'root:root' |chpasswd
 RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -39,7 +49,6 @@ RUN apt-get -y --no-install-recommends install ffmpeg xfce4 xfce4-goodies xorg d
 
 RUN apt-get install --no-install-recommends -yqq \
         firefox \
-        chromium-browser \
         preload \
         gnome-system-monitor \
         screenfetch \
@@ -66,7 +75,6 @@ RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime && dpkg-reconfigure 
     echo "mate-session" > /etc/skel/.xsession && \
     sed -i '/TerminalServerUsers/d' /etc/xrdp/sesman.ini  && \
     sed -i '/TerminalServerAdmins/d' /etc/xrdp/sesman.ini  && \
-    sed -i 's#PLUGIN_PARAMETERS=""#PLUGIN_PARAMETERS="--no-sandbox"#g' /usr/bin/chromium-browser  && \
     xrdp-keygen xrdp auto  && \
     mkdir -p /var/run/xrdp && \
     chmod 2775 /var/run/xrdp  && \
