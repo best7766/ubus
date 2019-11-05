@@ -11,10 +11,12 @@ ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 RUN cd /root && \
     sed -i 's/^#\s*\(deb.*partner\)$/\1/g' /etc/apt/sources.list && \
-    add-apt-repository ppa:ubuntu-mozilla-daily/ppa && \
     apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y apt-utils && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:ubuntu-mozilla-daily/ppa && \
+    apt-get update -y && \
     apt-get install -yqq locales  && \ 
     echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \ 
     echo 'LANGUAGE="en_US:en"' >> /etc/default/locale && \ 
